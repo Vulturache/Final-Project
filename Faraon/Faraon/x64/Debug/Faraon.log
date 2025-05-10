@@ -1,0 +1,5 @@
+﻿  Faraon_Main.cpp
+E:\Games\Faraon\Faraon\Faraon\Faraon_Main.cpp(65,4): warning C4551: function call missing argument list
+E:\Games\Faraon\Faraon\Faraon\Faraon_Main.cpp(108,3): warning C4551: function call missing argument list
+E:\Games\Faraon\Faraon\Faraon\Faraon_Main.cpp(74,1): warning C4717: 'main_menu': recursive on all control paths, function will cause runtime stack overflow
+  Faraon.vcxproj -> E:\Games\Faraon\Faraon\x64\Debug\Faraon.exe
