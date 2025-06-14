@@ -1,2 +1,4 @@
-﻿  Faraon_Main.cpp
+﻿  Client.cpp
+E:\Games\Faraon\Faraon\Faraon\Client.cpp(67,4): warning C4551: function call missing argument list
+E:\Games\Faraon\Faraon\Faraon\Client.cpp(106,4): warning C4551: function call missing argument list
   Faraon.vcxproj -> E:\Games\Faraon\Faraon\x64\Debug\Faraon.exe

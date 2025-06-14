@@ -5,7 +5,6 @@ int main()
 {
 	Client d1;
 	d1.log_in();
-	d1.main_menu();
 
 
 }

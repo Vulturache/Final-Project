@@ -6,15 +6,13 @@ void Client::main_menu()
 
 		int alegere;
 		cout << "\t\t ___________________________________FARAON___________________________________ \n\n\n";
-		cout << "\t\tBine ati venit pe aplicatia noastra de banking, alegeti  optiunea dorita                 \n" << endl;
-		cout << "\t\t\t                                                                                                                  \n\n\n";
+		cout << nume << "," << "Bine ati venit pe aplicatia noastra de banking, alegeti optiunea dorita\n" << endl;
+		cout << "\n\n\n";
 		cout << "1.Interogare Sold" << endl;
 		cout << "2.Retragere Numerar" << endl;
-		cout << "4.Placeholder" << endl;
-		cout << "5.Placeholder" << endl;
-		cout << "6.Placeholder" << endl;
-		cout << "7.DEBUG" << endl;
-		cout << "8.Iesire" << endl;
+		cout << "3.Transfer catre un alt cont" << endl;
+		cout << "4.Adaugati banii in cont" << endl;
+		cout << "5.Iesire" << endl;
 		cout << "Optiunea: ";
 		cin >> alegere;
 
@@ -23,15 +21,26 @@ void Client::main_menu()
 		case 1:
 		{
 			cout << endl;
-			cout << nume << "Sold-ul dumneavoastra este: " << banii << endl;
+			cout << nume << ",\n" << " Sold-ul dumneavoastra este: " << banii << endl;
 			cout << endl;
 			system("PAUSE");
+			system("cls");
 			main_menu();
 			break;
 		}
 		case 2:
 		{
-
+			double ex;
+			cout << "Cati banii ati dorii extrasi?\n";
+			cin >> ex;
+			banii = banii - ex;
+			cout << "Ati retras suma de: " << ex << endl;
+			cout << "In contul dumneavoastra au ramas: " << banii << endl;
+			system("PAUSE");
+			system("cls");
+			retragereBanii(ex);
+			main_menu();
+			break;
 		}
 		case 3:
 		{
@@ -39,24 +48,25 @@ void Client::main_menu()
 		}
 		case 4:
 		{
+			double add;
+			cout << "Cati banii depuneti?\n";
+			cin >> add;
+			banii = banii + add;
+			cout << "Ati adaugat: " << add << " la contul dumneavoastra" << endl;
+			cout << "Total-ul din cont este de: " << banii << endl;
+			system("PAUSE");
+			system("cls");
+			modificareBanii(add);
+			main_menu();
+			break;
 
 		}
 		case 5:
 		{
-
-		}
-		case 6:
-		{
-
-		}
-		case 7:
-		{
-
-		}
-		case 8:
-		{
-			cout << "Multumim";
+			cout << "Multumim" << endl;
+			system("PAUSE");
 			exit;
+			break;
 		}
 		default:
 			system("cls");
@@ -92,8 +102,10 @@ void Client::main_menu()
 		}
 		case 3:
 		{
-			cout << "Multumim";
+			cout << "Multumim" << endl;
+			system("PAUSE");
 			exit;
+			break;
 		}
 		default:
 			system("cls");
@@ -108,21 +120,21 @@ void Client::main_menu()
 	void Client::log()
 	{
 		int n = 0;
-		string username, parola, uid, pass;
+		string username, parola;
 		system("cls");
-		cout << "Introduceti un Username si o Parola" << endl;
+		cout << "Introduceti Username-ul si o Parola de la cont" << endl;
 		cout << "Username: ";
 		cin >> username;
 		cout << "Parola: ";
 		cin >> parola;
 
 		fstream input("Conturi.txt");
-		if (!input)
+				if (!input)
 		{
 			cout << "eroare la deschiderea fisierului";
 		}
 		else {
-			while (input >> uid >> pass)
+			while (input >> uid >> pass >> banii)
 			{
 				if (username == uid && pass == parola)
 				{
@@ -132,7 +144,10 @@ void Client::main_menu()
 			}
 			if (n == 1)
 			{
-				cout << username << "\nAti fost loghat cu success";
+				cout << username << ",\n" << "Ati fost loghat cu success\n";
+				system("PAUSE");
+				system("cls");
+				nume = username;
 				main_menu();
 			}
 			else
@@ -146,15 +161,49 @@ void Client::main_menu()
 	}
 	void Client::reg()
 	{
-		string username_r, parola_r, uid_r, pass_r;
+		string username_r, parola_r;
 		system("cls");
 		cout << "Alegeti un Username: ";
 		cin >> username_r;
 		cout << "Alegeti o Parola: ";
 		cin >> parola_r;
+		cout << "Cati banii aveti in cont? ";
+		cin >> banii;
 		ofstream reg1("Conturi.txt", ios::app);
-		reg1 << username_r << ' ' << parola_r << endl;
+		reg1 << username_r << ' ' << parola_r << ' ' << banii << endl;
 		cout << "Intregistrare completa";
 		log_in();
 
+	}
+
+	void Client::modificareBanii(double banii_c)
+	{
+		ifstream cit("Conturi.txt");
+		if (!cit)
+			{
+				cout << "eroare la deschiderea fisierului";
+			}
+			while (cit >> uid >> pass >> banii)
+			{
+				banii = banii + banii_c;
+			}
+			ofstream modif("Conturi.txt");
+			modif << uid << ' ' << pass << ' ' << banii << endl;
+			modif.close();
+	}
+
+	void Client::retragereBanii(double banii_c)
+	{
+		ifstream cit("Conturi.txt");
+		if (!cit)
+		{
+			cout << "eroare la deschiderea fisierului";
+		}
+		while (cit >> uid >> pass >> banii)
+		{
+			banii = banii - banii_c;
+		}
+		ofstream modif("Conturi.txt");
+		modif << uid << ' ' << pass << ' ' << banii << endl;
+		modif.close();
 	}
