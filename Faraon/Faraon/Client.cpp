@@ -44,7 +44,27 @@ void Client::main_menu()
 		}
 		case 3:
 		{
-
+			double suma_transferata;
+			string username_ales;
+			cout << "Introduceti username-ul persoanei: \n"; cin >> username_ales;
+			cout << "Ce suma transferati: \n"; cin >> suma_transferata;
+			retragereBanii(suma_transferata);
+			ifstream ales("Conturi.txt");
+			if (!ales)
+			{
+				cout << "eroare la deschiderea fisierului";
+			}
+			while (ales >> username_ales >> pass >> banii)
+			{
+				banii = banii + suma_transferata;
+			}
+			ofstream transfer("Conturi.txt");
+			transfer << username_ales << ' ' << pass << ' ' << banii << endl;
+			transfer.close();
+			system("PAUSE");
+			system("cls");
+			main_menu();
+			break;
 		}
 		case 4:
 		{
@@ -129,35 +149,40 @@ void Client::main_menu()
 		cin >> parola;
 
 		fstream input("Conturi.txt");
-				if (!input)
+		if (!input)
 		{
-			cout << "eroare la deschiderea fisierului";
+			cout << "Eroare la deschiderea fisierului";
+			return;
 		}
-		else {
-			while (input >> uid >> pass >> banii)
-			{
-				if (username == uid && pass == parola)
-				{
-					n = 1;
-				}
-				input.close();
-			}
-			if (n == 1)
-			{
-				cout << username << ",\n" << "Ati fost loghat cu success\n";
-				system("PAUSE");
-				system("cls");
-				nume = username;
-				main_menu();
-			}
-			else
-			{
-				cout << "eroare de loghare";
-				log();
-			}
-		}
-		
 
+		string u, p;
+		double b;
+
+		while (input >> u >> p >> b)
+		{
+			if (username == u && parola == p)
+			{
+				nume = u;   
+				banii = b;    
+				n = 1;
+				break;       
+			}
+		}
+		input.close();
+
+		if (n == 1)
+		{
+			cout << username << ",\nAti fost logat cu succes\n";
+			system("PAUSE");
+			system("cls");
+			main_menu();
+		}
+		else
+		{
+			cout << "Eroare de logare\n";
+			system("PAUSE");
+			log();  // try again
+		}
 	}
 	void Client::reg()
 	{
@@ -180,16 +205,33 @@ void Client::main_menu()
 	{
 		ifstream cit("Conturi.txt");
 		if (!cit)
+		{
+			cout << "Eroare la deschiderea fisierului";
+			return;
+		}
+
+		vector<string> lines;
+		string u, p;
+		double b;
+
+		while (cit >> u >> p >> b)
+		{
+			if (u == nume)
 			{
-				cout << "eroare la deschiderea fisierului";
+				b = b + banii_c;
+				banii = b;
 			}
-			while (cit >> uid >> pass >> banii)
-			{
-				banii = banii + banii_c;
-			}
-			ofstream modif("Conturi.txt");
-			modif << uid << ' ' << pass << ' ' << banii << endl;
-			modif.close();
+
+			lines.push_back(u + " " + p + " " + to_string(b));
+		}
+		cit.close();
+
+		ofstream modif("Conturi.txt");
+		for (const string& line : lines)
+		{
+			modif << line << '\n';
+		}
+		modif.close();
 	}
 
 	void Client::retragereBanii(double banii_c)
@@ -197,13 +239,34 @@ void Client::main_menu()
 		ifstream cit("Conturi.txt");
 		if (!cit)
 		{
-			cout << "eroare la deschiderea fisierului";
+			cout << "Eroare la deschiderea fisierului";
+			return;
 		}
-		while (cit >> uid >> pass >> banii)
+
+		vector<string> lines;
+		string u, p;
+		double b;
+
+		while (cit >> u >> p >> b)
 		{
-			banii = banii - banii_c;
+			if (u == nume)
+			{
+			  if (b < banii_c) {
+					cout << "Fonduri insuficiente!\n";
+					return;
+				}
+				b = b - banii_c;
+				banii = b;
+			}
+
+			lines.push_back(u + " " + p + " " + to_string(b));
 		}
+		cit.close();
+
 		ofstream modif("Conturi.txt");
-		modif << uid << ' ' << pass << ' ' << banii << endl;
+		for (const string& line : lines)
+		{
+			modif << line << '\n';
+		}
 		modif.close();
 	}
