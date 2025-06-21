@@ -33,9 +33,7 @@ void Client::main_menu()
 			double ex;
 			cout << "Cati banii ati dorii extrasi?\n";
 			cin >> ex;
-			banii = banii - ex;
 			cout << "Ati retras suma de: " << ex << endl;
-			cout << "In contul dumneavoastra au ramas: " << banii << endl;
 			system("PAUSE");
 			system("cls");
 			retragereBanii(ex);
@@ -48,19 +46,59 @@ void Client::main_menu()
 			string username_ales;
 			cout << "Introduceti username-ul persoanei: \n"; cin >> username_ales;
 			cout << "Ce suma transferati: \n"; cin >> suma_transferata;
-			retragereBanii(suma_transferata);
+			if (suma_transferata > banii)
+			{
+				cout << "Fonduri insuficiente" << endl;
+				system("PAUSE");
+				system("cls");
+				main_menu();
+			}
 			ifstream ales("Conturi.txt");
 			if (!ales)
 			{
-				cout << "eroare la deschiderea fisierului";
+				cout << "Eroare la deschiderea fisierului";
+				return;
 			}
-			while (ales >> username_ales >> pass >> banii)
+			vector<string> lines; // pentru a rescrie in fisier tot text
+			string u, p;
+			double b;
+			bool user_exista = false; // daca gasim user
+			while (ales >> u >> p >> b)
 			{
-				banii = banii + suma_transferata;
+				if (u == username_ales)
+				{
+					b = b + suma_transferata;
+					user_exista = true;
+				}                        // suma contului gasit se schimba
+				if (u == nume)
+				{
+					b = b - suma_transferata;
+					banii = b;
+				}                               //suma de pe contul curent se schimba
+				lines.push_back(u + " " + p + " " + to_string(b)); // se pun datele in vector ca si string
+			
+			}
+
+			ales.close();
+			if (!user_exista)
+			{
+				cout << "Acest user nu exista" << endl;
+				system("PAUSE");
+				system("cls");
+				main_menu();
 			}
 			ofstream transfer("Conturi.txt");
-			transfer << username_ales << ' ' << pass << ' ' << banii << endl;
+			if (!transfer)
+			{
+				cout << "Eroare la deschiderea fisierului";
+				return;
+			}
+			for (const auto& el : lines)
+			{
+					transfer << el << endl; // se scriu datele din vector
+			}
 			transfer.close();
+			cout << "Transfer facut cu success!" << endl;
 			system("PAUSE");
 			system("cls");
 			main_menu();
@@ -84,8 +122,7 @@ void Client::main_menu()
 		case 5:
 		{
 			cout << "Multumim" << endl;
-			system("PAUSE");
-			exit;
+			log_in();
 			break;
 		}
 		default:
@@ -139,8 +176,8 @@ void Client::main_menu()
 
 	void Client::log()
 	{
-		int n = 0;
-		string username, parola;
+		int n = 0; // counter pentru a tracka daca logarea este reusita
+		string username, parola; // variabile temporare pentru user input
 		system("cls");
 		cout << "Introduceti Username-ul si o Parola de la cont" << endl;
 		cout << "Username: ";
@@ -148,27 +185,27 @@ void Client::main_menu()
 		cout << "Parola: ";
 		cin >> parola;
 
-		fstream input("Conturi.txt");
-		if (!input)
-		{
+		fstream input("Conturi.txt"); // read and write in fisierul conturi
+		if (!input) // error la deschiderea fisierului
+		{ 
 			cout << "Eroare la deschiderea fisierului";
 			return;
 		}
 
 		string u, p;
-		double b;
+		double b; // variabile locale temporare pentru a citi username, password si bani
 
-		while (input >> u >> p >> b)
+		while (input >> u >> p >> b) // citeste user, parola si valoarea
 		{
 			if (username == u && parola == p)
 			{
 				nume = u;   
-				banii = b;    
-				n = 1;
+				banii = b;     // variabilele de clasa au valoarea user-ului logat
+				n = 1; // login reusit
 				break;       
 			}
 		}
-		input.close();
+		input.close(); // inchidem fisiser
 
 		if (n == 1)
 		{
@@ -181,36 +218,36 @@ void Client::main_menu()
 		{
 			cout << "Eroare de logare\n";
 			system("PAUSE");
-			log();  // try again
+			log(); // daca login e reusit trecem la main menu daca nu reapelam logarea
 		}
 	}
 	void Client::reg()
 	{
-		string username_r, parola_r;
+		string username_r, parola_r; //variabile pentru a citi user si parola noua
 		system("cls");
 		cout << "Alegeti un Username: ";
 		cin >> username_r;
 		cout << "Alegeti o Parola: ";
 		cin >> parola_r;
 		cout << "Cati banii aveti in cont? ";
-		cin >> banii;
-		ofstream reg1("Conturi.txt", ios::app);
-		reg1 << username_r << ' ' << parola_r << ' ' << banii << endl;
+		cin >> banii; 
+		ofstream reg1("Conturi.txt", ios::app); // scriem in fisiser, una sub alta
+		reg1 << username_r << ' ' << parola_r << ' ' << banii << endl; // scrie in fisier username parola si bani
 		cout << "Intregistrare completa";
-		log_in();
+		log_in(); // trece la meniu de logare
 
 	}
 
 	void Client::modificareBanii(double banii_c)
 	{
-		ifstream cit("Conturi.txt");
+		ifstream cit("Conturi.txt"); // deschidem fisier
 		if (!cit)
 		{
 			cout << "Eroare la deschiderea fisierului";
 			return;
 		}
 
-		vector<string> lines;
+		vector<string> lines; //variabile temporare si vector pentru a stoca liniile din conturi.txt
 		string u, p;
 		double b;
 
@@ -220,9 +257,9 @@ void Client::main_menu()
 			{
 				b = b + banii_c;
 				banii = b;
-			}
+			}//citeste liniile din doc si updateaza banii pentru userul logat
 
-			lines.push_back(u + " " + p + " " + to_string(b));
+			lines.push_back(u + " " + p + " " + to_string(b)); // salveaza datele modificate in vector, to_string convert numere in string
 		}
 		cit.close();
 
@@ -231,10 +268,10 @@ void Client::main_menu()
 		{
 			modif << line << '\n';
 		}
-		modif.close();
+		modif.close(); // foloseste liniile salvate in vector si le scrie in fisiser
 	}
 
-	void Client::retragereBanii(double banii_c)
+	void Client::retragereBanii(double banii_c) // la fel ca aia de sus doar ca cu -
 	{
 		ifstream cit("Conturi.txt");
 		if (!cit)
@@ -251,12 +288,18 @@ void Client::main_menu()
 		{
 			if (u == nume)
 			{
-			  if (b < banii_c) {
+			  if (b < banii_c) 
+			  {
 					cout << "Fonduri insuficiente!\n";
+					system("PAUSE");
+					system("cls");
 					return;
-				}
-				b = b - banii_c;
-				banii = b;
+			  }
+			  else 
+			  {
+				  b = b - banii_c;
+				  banii = b;
+			  }
 			}
 
 			lines.push_back(u + " " + p + " " + to_string(b));
