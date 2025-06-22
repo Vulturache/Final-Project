@@ -1,16 +1,15 @@
 # Project Name: Faraon
 
-Faraon este o simpla aplicatie bancara in consola creata pentru a fi prezentata ca proiect final in cadrul cursurilor ITSchool
+Faraon este o aplicație bancară simplă, creată pentru a fi rulată în consolă și prezentată ca proiect final în cadrul cursurilor IT School.
 
 # Features:
 
 Aplicatia suporta functii de:
 
--Autentificare si logare folosind un txt file
+-Autentificare și logare folosind un fișier .txt
 
--Adaugare si retragere numerear
+-Adăugare și retragere de numerar
 
--Transferarea de valuta la un alt cont existent
+-Transfer de valută către un alt cont existent
 
--Persistenta datelor dupa inchiderea aplicatiei
-
+-Păstrarea datelor după închiderea aplicației (persistență)
